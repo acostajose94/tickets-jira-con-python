@@ -1,0 +1,35 @@
+from jira import JIRA
+
+# Definir combinaciones de palabras clave para diferentes tipos de tickets
+combinaciones_palabras_clave = {
+    'deudores_acosta': ['deudores', 'acosta'],
+    'pagos_jose': ['pagos', 'jose'],
+    'pagos_acosta': ['pagos', 'acosta'],
+    'deudores_jose': ['deudores', 'jose'],
+    'pagos_algo': ['pagos', 'algo'],
+    'pagos_algo2': ['pagos', 'algo2'],
+    'base_algo': ['base', 'algo'],
+    'actualizar_america':['actualizar','america']
+    # Agrega más combinaciones según tus necesidades
+}
+
+# Establecer la conexión con Jira
+jira_url = 'https://acostajose.atlassian.net'
+jira_username = 'helpdesk@acostajose.com'
+jira_token = 'acostajose_acostajose_acostajose_acostajose_acostajose_acostajose'
+project_key = 'acostajose'
+
+options = {'server': jira_url}
+jira = JIRA(options, basic_auth=(jira_username, jira_token))
+
+# Obtener los tickets en estado "Esperando Asistencia" del proyecto específico
+jql_query = f'project = {project_key} AND status = "Esperando Asistencia"'
+issues = jira.search_issues(jql_query)
+
+# Verificar los tickets en busca de las combinaciones de palabras clave
+for issue in issues:
+    summary = issue.fields.summary.lower()
+    for tipo_ticket, palabras_clave in combinaciones_palabras_clave.items():
+        contains_all_keywords = all(keyword.lower() in summary for keyword in palabras_clave)
+        if contains_all_keywords:
+            print(f"Tipo de ticket: {tipo_ticket}\nTicket {issue.key}: {issue.fields.summary}\n")
