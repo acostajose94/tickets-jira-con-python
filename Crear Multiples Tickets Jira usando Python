@@ -1,0 +1,43 @@
+from jira import JIRA
+import datetime
+
+jira_url = 'https://acostajose94.atlassian.net'
+jira_username = 'helpdesk@acostajose94.com'
+jira_token = 'acostajose94_acostajose94_acostajose94_acostajose94'
+project_key = 'acostajose94'
+fecha_hoy = datetime.date.today().strftime('%Y-%m-%d')
+
+# Valores sacados del Jira, varían según cada proyecto específico
+issue_type_id = 10002
+request_type_id = '32'
+
+jira_connection = JIRA(
+    basic_auth=(jira_username, jira_token),
+    server=jira_url
+)
+
+num_tickets = 5  # Número de tickets que deseas crear
+
+for i in range(num_tickets):
+    ticket_summary = 'BASE Y PAGOS ' + fecha_hoy + ' - Ticket ' + str(i + 1)
+
+    issue_dict = {
+        'project': {'key': project_key},
+        'summary': ticket_summary,
+        'description': ticket_summary,
+        'issuetype': {'id': issue_type_id},
+        'customfield_10010': request_type_id,
+        # Estos valores extras son específicos por cada Proyecto
+        'customfield_10085': [{'id': '10225', 'value': 'Jose Acosta'}],
+        'customfield_10093': {'value': 'acostajose94'},
+    }
+
+    new_issue = jira_connection.create_issue(fields=issue_dict)
+
+    # Imprimir el número del ticket
+    print(f"El ticket {new_issue.key} ha sido creado exitosamente.")
+
+    # Cambiar el estado del ticket
+    ticket = jira_connection.issue(new_issue)
+    transition_id = jira_connection.find_transitionid_by_name(ticket, 'En curso')
+    jira_connection.transition_issue(ticket, transition_id)
