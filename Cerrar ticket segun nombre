@@ -1,0 +1,19 @@
+
+from jira import JIRA
+
+jira_url = 'https://acostajose94.atlassian.net'
+jira_username = 'helpdesk@acostajose94.com'
+jira_token = 'acostajose94_acostajose94_acostajose94_acostajose94'
+project_key = 'acostajose94'
+ticket_phrase = 'BASE Y PAGOS' 
+
+# Cerrar Base
+jira_conection = JIRA(jira_url, basic_auth=(jira_username, jira_token))
+issues_c = jira_conection.search_issues('summary ~ "' + re.escape(ticket_phrase) + '"', maxResults=1, fields="created")
+
+if len(issues_c) == 0:
+    print('No se encontraron tickets con esa frase parcial')
+else:
+    issue = issues_c[0]
+    print('Cerrando ticket', issue.key)
+    jira_conection.transition_issue(issue, '961')
